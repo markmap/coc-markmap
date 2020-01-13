@@ -34,7 +34,6 @@
     "@rollup/plugin-commonjs": "^11.0.1",
     "@rollup/plugin-node-resolve": "^7.0.0",
     "@rollup/plugin-replace": "^2.3.0",
-    "coc.nvim": "^0.0.74",
     "cross-env": "^6.0.3",
     "del-cli": "^3.0.0",
     "husky": "^4.0.7",
@@ -45,6 +44,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.0",
+    "coc.nvim": "^0.0.74",
     "markmap": "^0.6.1"
   },
   "engines": {
