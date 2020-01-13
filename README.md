@@ -6,6 +6,8 @@ This is an extension for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
 If you prefer a CLI version, see [markmap-cli](https://github.com/gera2ld/markmap-cli).
 
+Note: *coc-markmap* allows generating markmaps from current buffer or selected text, while the CLI version can only create markmaps from Markdown files.
+
 <img src="https://user-images.githubusercontent.com/3139113/72221499-52476a80-3596-11ea-8d15-c57fdfe04ce0.png" alt="markdown" width="300"> <img src="https://user-images.githubusercontent.com/3139113/72221508-7014cf80-3596-11ea-9b59-b8a97bba8e1c.png" alt="mindmap" width="300">
 
 ## Installation
@@ -28,6 +30,8 @@ Open a Markdown, and execute:
 
 An HTML file with the same basename as the Markdown file will be created and opened in your default browser.
 
+Visualization of selected text is also supported.
+
 ## Configurations
 
 ### Key mappings
@@ -35,18 +39,21 @@ An HTML file with the same basename as the Markdown file will be created and ope
 There is no default key mapping, but you can easily add your own:
 
 ```viml
+" Create markmap from the whole file
 nmap <Leader>m <Plug>(coc-markmap-create)
+" Create markmap from the selected lines
+vmap <Leader>m <Plug>(coc-markmap-create-v)
 ```
 
 ### Commands
 
-It is also possible to add a command to create a markmap.
+It is also possible to add a command to create markmaps.
 
 ```viml
-command! Markmap CocCommand markmap.create
+command! -range=% Markmap CocCommand markmap.create <line1> <line2>
 ```
 
-Now you have the `Markmap` command to create a Markmap.
+Now you have the `:Markmap` command to create a Markmap, either from the whole file or selected lines.
 
 ## Related
 
