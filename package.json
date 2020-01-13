@@ -24,8 +24,7 @@
   },
   "main": "dist/index.common.js",
   "files": [
-    "dist",
-    "templates"
+    "dist"
   ],
   "devDependencies": {
     "@babel/preset-typescript": "^7.7.7",
