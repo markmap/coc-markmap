@@ -7,7 +7,6 @@ import {
 } from 'coc.nvim';
 import parse from 'markmap/lib/parse.markdown';
 import transform from 'markmap/lib/transform.headings';
-import { platform } from 'coc.nvim/lib/util';
 
 let template;
 
@@ -44,9 +43,9 @@ async function createMarkmap(nvim: Neovim, { open = true }: ICreateOptions = {})
   const filename = `${basename}.html`;
   fs.promises.writeFile(filename, html, 'utf8');
   if (open) {
-    if (platform.isMacintosh) {
+    if (process.platform === 'darwin') {
       nvim.command(`silent !open ${filename}`);
-    } else if (platform.isLinux) {
+    } else if (process.platform === 'linux') {
       nvim.command(`silent !xdg-open ${filename}`);
     } else {
       nvim.command(`echom "Cannot launch browser, please open ${filename} manually"`);
