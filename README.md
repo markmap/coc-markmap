@@ -4,6 +4,8 @@ Visualize your Markdown as mindmaps with [Markmap](https://github.com/dundalek/m
 
 This is an extension for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
+If you prefer a CLI version, see [markmap-cli](https://github.com/gera2ld/markmap-cli).
+
 <img src="https://user-images.githubusercontent.com/3139113/72221499-52476a80-3596-11ea-8d15-c57fdfe04ce0.png" alt="markdown" width="300"> <img src="https://user-images.githubusercontent.com/3139113/72221508-7014cf80-3596-11ea-9b59-b8a97bba8e1c.png" alt="mindmap" width="300">
 
 ## Installation
@@ -45,3 +47,7 @@ command! Markmap CocCommand markmap.create
 ```
 
 Now you have the `Markmap` command to create a Markmap.
+
+## Related
+
+- [markmap-cli](https://github.com/gera2ld/markmap-cli) - Standalone command line version
