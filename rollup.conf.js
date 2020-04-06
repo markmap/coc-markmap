@@ -7,7 +7,7 @@ const BANNER = `/*! ${pkg.name} v${pkg.version} | ${pkg.license} License */`;
 
 const external = getExternal([
   'coc.nvim',
-  'markmap-cli',
+  'markmap-lib',
 ]);
 const rollupConfig = [
   {

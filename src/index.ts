@@ -4,7 +4,7 @@ import {
   commands,
   workspace,
 } from 'coc.nvim';
-import { createMarkmap } from 'markmap-cli';
+import { createMarkmap } from 'markmap-lib';
 
 async function getContent(nvim: Neovim, line1 = '1', line2 = '"$"'): Promise<string> {
   const lines = (await nvim.eval(`getline(${line1},${line2})`)) as string[];
