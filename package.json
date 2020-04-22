@@ -1,6 +1,6 @@
 {
   "name": "coc-markmap",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Visualize your Markdown as mindmaps with Markmap",
   "author": "Gerald <i@gerald.top>",
   "license": "MIT",
