@@ -1,6 +1,6 @@
 # coc-markmap
 
-Visualize your Markdown as mindmaps with [Markmap](https://github.com/dundalek/markmap).
+Visualize your Markdown as mindmaps with [markmap-lib](https://github.com/gera2ld/markmap-lib).
 
 This is an extension for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
@@ -26,6 +26,9 @@ Open a Markdown, and execute:
 
 ```viml
 :CocCommand markmap.create
+
+" enable MathJax
+:CocCommand markmap.create --enable-mathjax
 ```
 
 An HTML file with the same basename as the Markdown file will be created and opened in your default browser.
