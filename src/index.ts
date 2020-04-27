@@ -11,10 +11,14 @@ async function getContent(nvim: Neovim, line1 = '1', line2 = '"$"'): Promise<str
   return lines.join('\n');
 }
 
-async function createMarkmapFromVim(nvim: Neovim, line1?: string, line2?: string): Promise<void> {
+async function createMarkmapFromVim(nvim: Neovim, { line1, line2, ...rest }: {
+  line1?: string;
+  line2?: string;
+} = {}): Promise<void> {
   const content = await getContent(nvim, line1, line2);
   const basename = await nvim.eval('expand("%<")');
   createMarkmap({
+    ...rest,
     content,
     output: basename && `${basename}.html`,
   });
@@ -40,15 +44,25 @@ export function activate(context: ExtensionContext): void {
         [, line1],
         [, line2],
       ] = await nvim.eval('[getpos("\'<"),getpos("\'>")]') as [number[], number[]];
-      await createMarkmapFromVim(nvim, `${line1}`, `${line2}`);
+      await createMarkmapFromVim(nvim, {
+        line1: `${line1}`,
+        line2: `${line2}`,
+      });
     },
     { sync: false },
   ));
 
   context.subscriptions.push(commands.registerCommand(
     'markmap.create',
-    async (line1, line2) => {
-      await createMarkmapFromVim(nvim, line1, line2);
+    async (...args) => {
+      const positional = [];
+      const options: any = {};
+      for (const arg of args) {
+        if (arg === '--enable-mathjax') options.mathJax = true;
+        else if (!arg.startsWith('-')) positional.push(arg);
+      }
+      [options.line1, options.line2] = positional;
+      await createMarkmapFromVim(nvim, options);
     },
   ));
 }
