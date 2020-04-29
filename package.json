@@ -58,5 +58,17 @@
   "activationEvents": [
     "onLanguage:markdown"
   ],
+  "contributes": {
+    "configuration": {
+      "title": "coc-markmap",
+      "properties": {
+        "markmap.mathJax": {
+          "type": "object",
+          "description": "Options that will be passed to MathJax directly",
+          "default": {}
+        }
+      }
+    }
+  },
   "repository": "git@github.com:gera2ld/coc-markmap.git"
 }

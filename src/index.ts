@@ -26,6 +26,7 @@ async function createMarkmapFromVim(nvim: Neovim, { line1, line2, ...rest }: {
 
 export function activate(context: ExtensionContext): void {
   const { nvim } = workspace;
+  const config = workspace.getConfiguration('markmap');
 
   context.subscriptions.push(workspace.registerKeymap(
     ['n'],
@@ -58,7 +59,7 @@ export function activate(context: ExtensionContext): void {
       const positional = [];
       const options: any = {};
       for (const arg of args) {
-        if (arg === '--enable-mathjax') options.mathJax = true;
+        if (arg === '--enable-mathjax') options.mathJax = config.get<object>('mathJax') || true;
         else if (!arg.startsWith('-')) positional.push(arg);
       }
       [options.line1, options.line2] = positional;
