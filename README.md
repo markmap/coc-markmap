@@ -37,6 +37,28 @@ Visualization of selected text is also supported.
 
 ## Configurations
 
+### CocConfig
+
+You can change some global configurations for this extension in `coc-settings.json`.
+
+First open the settings file with `:CocConfig`.
+
+#### markmap.mathJax
+
+Overrides [the default options of MathJax](http://docs.mathjax.org/en/latest/options/input/tex.html#option-descriptions).
+
+For example, with the following configuration MathJax will recognize inline mathematics between `$...$`:
+
+```json
+{
+  "markmap.mathJax": {
+    "tex": {
+      "inlineMath": [ ["$","$"], ["\\(","\\)"] ]
+    }
+  }
+}
+```
+
 ### Key mappings
 
 There is no default key mapping, but you can easily add your own:
