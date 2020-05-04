@@ -1,11 +1,11 @@
-const rollup = require('rollup');
-const { getRollupPlugins, getExternal, DIST } = require('./scripts/util');
+const { getRollupPlugins, getRollupExternal } = require('@gera2ld/plaid');
 const pkg = require('./package.json');
 
+const DIST = 'dist';
 const FILENAME = 'index';
 const BANNER = `/*! ${pkg.name} v${pkg.version} | ${pkg.license} License */`;
 
-const external = getExternal([
+const external = getRollupExternal([
   'coc.nvim',
   'markmap-lib',
 ]);
