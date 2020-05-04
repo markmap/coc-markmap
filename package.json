@@ -32,8 +32,7 @@
     "@gera2ld/plaid-rollup": "~2.0.2",
     "coc.nvim": "^0.0.77",
     "del-cli": "^3.0.0",
-    "husky": "^4.2.5",
-    "typescript": "^3.8.3"
+    "husky": "^4.2.5"
   },
   "dependencies": {
     "@babel/runtime": "^7.9.6",

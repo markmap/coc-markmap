@@ -57,9 +57,13 @@ export function activate(context: ExtensionContext): void {
     'markmap.create',
     async (...args) => {
       const positional = [];
-      const options: any = {};
+      const options: any = {
+        mathJax: config.get<object>('mathJax'),
+        prism: config.get<object>('prism'),
+      };
       for (const arg of args) {
-        if (arg === '--enable-mathjax') options.mathJax = config.get<object>('mathJax') || true;
+        if (arg === '--enable-mathjax') options.mathJax = true;
+        else if (arg === '--enable-prism') options.prism = true;
         else if (!arg.startsWith('-')) positional.push(arg);
       }
       [options.line1, options.line2] = positional;
