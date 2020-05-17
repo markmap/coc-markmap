@@ -16,7 +16,7 @@ async function createMarkmapFromVim(nvim: Neovim, { line1, line2, ...rest }: {
   line2?: string;
 } = {}): Promise<void> {
   const content = await getContent(nvim, line1, line2);
-  const basename = await nvim.eval('expand("%<")');
+  const basename = await nvim.eval('expand("%:p:r")');
   createMarkmap({
     ...rest,
     content,
