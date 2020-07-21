@@ -1,38 +1,52 @@
 import {
   ExtensionContext,
-  Neovim,
   commands,
   workspace,
 } from 'coc.nvim';
+import { Position, Range } from 'vscode-languageserver-types'
 import { createMarkmap } from 'markmap-lib';
 
-async function getContent(nvim: Neovim, line1 = '1', line2 = '"$"'): Promise<string> {
-  const lines = (await nvim.eval(`getline(${line1},${line2})`)) as string[];
+async function getFullText(): Promise<string> {
+  const doc = await workspace.document;
+  return doc.textDocument.getText();
+}
+
+async function getSelectedText(): Promise<string> {
+  const { nvim } = workspace;
+  const doc = await workspace.document;
+  await nvim.command('normal! `<');
+  const start = await workspace.getCursorPosition();
+  await nvim.command('normal! `>');
+  let end = await workspace.getCursorPosition();
+  end = Position.create(end.line, end.character + 1);
+  const range = Range.create(start, end);
+  return doc.textDocument.getText(range);
+}
+
+async function getRangeText(line1: string, line2: string): Promise<string> {
+  const { nvim } = workspace;
+  const lines = await (nvim.eval(`getline(${line1},${line2})`)) as string[];
   return lines.join('\n');
 }
 
-async function createMarkmapFromVim(nvim: Neovim, { line1, line2, ...rest }: {
-  line1?: string;
-  line2?: string;
-} = {}): Promise<void> {
-  const content = await getContent(nvim, line1, line2);
+async function createMarkmapFromVim(content: string, options?: any): Promise<void> {
+  const { nvim } = workspace;
   const basename = await nvim.eval('expand("%:p:r")');
   createMarkmap({
-    ...rest,
+    ...options,
     content,
     output: basename && `${basename}.html`,
   });
 }
 
 export function activate(context: ExtensionContext): void {
-  const { nvim } = workspace;
   const config = workspace.getConfiguration('markmap');
 
   context.subscriptions.push(workspace.registerKeymap(
     ['n'],
     'markmap-create',
     async () => {
-      await createMarkmapFromVim(nvim);
+      await createMarkmapFromVim(await getFullText());
     },
     { sync: false },
   ));
@@ -41,21 +55,14 @@ export function activate(context: ExtensionContext): void {
     ['v'],
     'markmap-create-v',
     async () => {
-      const [
-        [, line1],
-        [, line2],
-      ] = await nvim.eval('[getpos("\'<"),getpos("\'>")]') as [number[], number[]];
-      await createMarkmapFromVim(nvim, {
-        line1: `${line1}`,
-        line2: `${line2}`,
-      });
+      await createMarkmapFromVim(await getSelectedText());
     },
     { sync: false },
   ));
 
   context.subscriptions.push(commands.registerCommand(
     'markmap.create',
-    async (...args) => {
+    async (...args: string[]) => {
       const positional = [];
       const options: any = {
         mathJax: config.get<object>('mathJax'),
@@ -66,8 +73,9 @@ export function activate(context: ExtensionContext): void {
         else if (arg === '--enable-prism') options.prism = true;
         else if (!arg.startsWith('-')) positional.push(arg);
       }
-      [options.line1, options.line2] = positional;
-      await createMarkmapFromVim(nvim, options);
+      const [line1, line2] = positional;
+      const content = line1 && line2 ? await getRangeText(line1, line2) : await getFullText();
+      await createMarkmapFromVim(content, options);
     },
   ));
 }
