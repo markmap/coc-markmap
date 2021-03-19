@@ -1,10 +1,13 @@
+import path from 'path';
 import {
   ExtensionContext,
   commands,
   workspace,
 } from 'coc.nvim';
-import { Position, Range } from 'vscode-languageserver-types'
-import { createMarkmap } from 'markmap-lib';
+import { develop, createMarkmap } from 'markmap-cli';
+
+type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
+let devServer: ThenArg<ReturnType<typeof develop>>;
 
 async function getFullText(): Promise<string> {
   const doc = await workspace.document;
@@ -12,14 +15,8 @@ async function getFullText(): Promise<string> {
 }
 
 async function getSelectedText(): Promise<string> {
-  const { nvim } = workspace;
   const doc = await workspace.document;
-  await nvim.command('normal! `<');
-  const start = await workspace.getCursorPosition();
-  await nvim.command('normal! `>');
-  let end = await workspace.getCursorPosition();
-  end = Position.create(end.line, end.character + 1);
-  const range = Range.create(start, end);
+  const range = await workspace.getSelectedRange('v', doc);
   return doc.textDocument.getText(range);
 }
 
@@ -31,16 +28,26 @@ async function getRangeText(line1: string, line2: string): Promise<string> {
 
 async function createMarkmapFromVim(content: string, options?: any): Promise<void> {
   const { nvim } = workspace;
-  const basename = await nvim.eval('expand("%:p:r")');
-  createMarkmap({
-    ...options,
-    content,
-    output: basename && `${basename}.html`,
-  });
+  const input = await nvim.eval('expand("%:p")') as string;
+  if (options.watch) {
+    if (devServer) devServer.close();
+    devServer = await develop({
+      input,
+      open: true,
+    });
+  } else {
+    const basename = path.basename(input, path.extname(input));
+    createMarkmap({
+      ...options,
+      content,
+      output: basename && `${basename}.html`,
+      open: true,
+    });
+  }
 }
 
 export function activate(context: ExtensionContext): void {
-  const config = workspace.getConfiguration('markmap');
+  // const config = workspace.getConfiguration('markmap');
 
   context.subscriptions.push(workspace.registerKeymap(
     ['n'],
@@ -64,13 +71,9 @@ export function activate(context: ExtensionContext): void {
     'markmap.create',
     async (...args: string[]) => {
       const positional = [];
-      const options: any = {
-        mathJax: config.get<object>('mathJax'),
-        prism: config.get<object>('prism'),
-      };
+      const options: any = {};
       for (const arg of args) {
-        if (arg === '--enable-mathjax') options.mathJax = true;
-        else if (arg === '--enable-prism') options.prism = true;
+        if (['-w', '--watch'].includes(arg)) options.watch = true;
         else if (!arg.startsWith('-')) positional.push(arg);
       }
       const [line1, line2] = positional;
