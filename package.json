@@ -5,13 +5,13 @@
   "author": "Gerald <gera2ld@live.com>",
   "license": "MIT",
   "scripts": {
+    "prepare": "husky install",
     "dev": "rollup -wc rollup.conf.js",
     "clean": "del-cli dist",
-    "prebuild": "run-s ci clean",
     "prepublishOnly": "run-s build",
     "ci": "run-s lint",
     "build:js": "rollup -c rollup.conf.js",
-    "build": "run-s build:js",
+    "build": "run-s ci clean build:js",
     "lint": "eslint --ext .ts ."
   },
   "publishConfig": {
@@ -23,16 +23,16 @@
     "dist"
   ],
   "devDependencies": {
-    "@babel/runtime": "^7.9.6",
+    "@babel/runtime": "^7.13.10",
     "@gera2ld/plaid": "~2.3.0",
     "@gera2ld/plaid-common-ts": "~2.3.1",
     "@gera2ld/plaid-rollup": "~2.3.0",
-    "coc.nvim": "^0.0.77",
+    "coc.nvim": "^0.0.80",
     "del-cli": "^3.0.1",
     "husky": "^5.1.3"
   },
   "dependencies": {
-    "markmap-cli": "^0.4.5"
+    "markmap-cli": "^0.5.0"
   },
   "engines": {
     "coc": ">= 0.0.70"

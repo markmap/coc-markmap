@@ -31,9 +31,9 @@ async function createMarkmapFromVim(content: string, options?: any): Promise<voi
   const input = await nvim.eval('expand("%:p")') as string;
   if (options.watch) {
     if (devServer) devServer.close();
-    devServer = await develop({
-      input,
+    devServer = await develop(input, {
       open: true,
+      toolbar: true,
     });
   } else {
     const basename = path.basename(input, path.extname(input));
@@ -42,6 +42,7 @@ async function createMarkmapFromVim(content: string, options?: any): Promise<voi
       content,
       output: basename && `${basename}.html`,
       open: true,
+      toolbar: true,
     });
   }
 }

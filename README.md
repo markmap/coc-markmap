@@ -28,11 +28,15 @@ Open a Markdown, and execute:
 :CocCommand markmap.create
 ```
 
-An HTML file with the same basename as the Markdown file will be created and opened in your default browser.
-
-Visualization of selected text is also supported.
+An HTML file with the same basename as the Markdown file will be created and opened in your default browser. If there is a selection, it will be used instead of the file content.
 
 Transforming plugins are enabled by default, including syntax highlight with [PrismJS](https://prismjs.com/) and math typesetting with [Katex](https://katex.org/).
+
+There is also a watching mode:
+
+```viml
+:CocCommand markmap.create -w
+```
 
 ## Configurations
 
