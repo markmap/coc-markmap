@@ -22,12 +22,6 @@ async function getSelectedText(): Promise<string> {
   return doc.textDocument.getText(range);
 }
 
-async function getRangeText(line1: string, line2: string): Promise<string> {
-  const { nvim } = workspace;
-  const lines = await (nvim.eval(`getline(${line1},${line2})`)) as string[];
-  return lines.join('\n');
-}
-
 async function startDevelop() {
   if (disposables.length) {
     for (const disposable of disposables) {
@@ -107,8 +101,7 @@ export function activate(context: ExtensionContext): void {
         if (['-w', '--watch'].includes(arg)) options.watch = true;
         else if (!arg.startsWith('-')) positional.push(arg);
       }
-      const [line1, line2] = positional;
-      const content = line1 && line2 ? await getRangeText(line1, line2) : await getFullText();
+      const content = await getFullText();
       await createMarkmapFromVim(content, options);
     },
   ));
