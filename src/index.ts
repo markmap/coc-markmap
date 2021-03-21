@@ -1,13 +1,15 @@
 import path from 'path';
 import {
+  Disposable,
   ExtensionContext,
   commands,
   workspace,
+  events,
 } from 'coc.nvim';
 import { develop, createMarkmap } from 'markmap-cli';
+import debounce from 'lodash.debounce';
 
-type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-let devServer: ThenArg<ReturnType<typeof develop>>;
+const disposables: Disposable[] = [];
 
 async function getFullText(): Promise<string> {
   const doc = await workspace.document;
@@ -26,25 +28,53 @@ async function getRangeText(line1: string, line2: string): Promise<string> {
   return lines.join('\n');
 }
 
+async function startDevelop() {
+  if (disposables.length) {
+    for (const disposable of disposables) {
+      disposable.dispose();
+    }
+    disposables.length = 0;
+  }
+  const devServer = await develop(undefined, {
+    open: true,
+    toolbar: true,
+  });
+  const { nvim } = workspace;
+  const buffer = await nvim.buffer;
+  const updateContent = async () => {
+    const lines = await buffer.getLines();
+    devServer.provider.setContent(lines.join('\n'));
+  };
+  const handleTextChange = debounce((bufnr: number) => {
+    if (buffer.id !== bufnr) return;
+    return updateContent();
+  }, 500);
+  const handleCursor = debounce((bufnr: number) => {
+    if (buffer.id !== bufnr) return;
+    devServer.provider.setCursor(events.cursor.lnum - 1);
+  }, 300);
+  disposables.push(Disposable.create(() => devServer.close()));
+  disposables.push(events.on('TextChanged', handleTextChange));
+  disposables.push(events.on('TextChangedI', handleTextChange));
+  disposables.push(events.on('CursorMoved', handleCursor));
+  disposables.push(events.on('CursorMovedI', handleCursor));
+  updateContent();
+}
+
 async function createMarkmapFromVim(content: string, options?: any): Promise<void> {
+  if (options.watch) {
+    return startDevelop();
+  }
   const { nvim } = workspace;
   const input = await nvim.eval('expand("%:p")') as string;
-  if (options.watch) {
-    if (devServer) devServer.close();
-    devServer = await develop(input, {
-      open: true,
-      toolbar: true,
-    });
-  } else {
-    const basename = path.basename(input, path.extname(input));
-    createMarkmap({
-      ...options,
-      content,
-      output: basename && `${basename}.html`,
-      open: true,
-      toolbar: true,
-    });
-  }
+  const basename = path.basename(input, path.extname(input));
+  createMarkmap({
+    ...options,
+    content,
+    output: basename && `${basename}.html`,
+    open: true,
+    toolbar: true,
+  });
 }
 
 export function activate(context: ExtensionContext): void {
