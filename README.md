@@ -22,6 +22,8 @@ Then install with the Vim command:
 
 ## Usage
 
+### Generating markmap HTML
+
 Open a Markdown, and execute:
 
 ```viml
@@ -32,11 +34,15 @@ An HTML file with the same basename as the Markdown file will be created and ope
 
 Transforming plugins are enabled by default, including syntax highlight with [PrismJS](https://prismjs.com/) and math typesetting with [Katex](https://katex.org/).
 
+### Watching mode
+
 There is also a watching mode:
 
 ```viml
 :CocCommand markmap.create -w
 ```
+
+The node under cursor will always be visible in the viewport on cursor move.
 
 ## Configurations
 
