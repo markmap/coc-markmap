@@ -1,6 +1,8 @@
 # coc-markmap
 
-Visualize your Markdown as mindmaps with [markmap-lib](https://github.com/gera2ld/markmap/tree/master/packages/markmap-lib).
+![NPM](https://img.shields.io/npm/v/coc-markmap.svg)
+
+Visualize your Markdown as mindmaps with [markmap](https://markmap.js.org/).
 
 This is an extension for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
