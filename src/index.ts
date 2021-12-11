@@ -1,4 +1,5 @@
-import path from 'path';
+import './prism-patch';
+import * as path from 'path';
 import {
   Disposable,
   ExtensionContext,

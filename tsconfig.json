@@ -1,15 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
+    "target": "es2019",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "types",
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react"
+    "outDir": "dist",
+    "allowSyntheticDefaultImports": true
   },
-  "files": [
-    "src/index.ts"
+  "include": [
+    "src/**/*"
   ]
 }
