@@ -8,7 +8,7 @@ import {
   events,
 } from 'coc.nvim';
 import { develop, createMarkmap } from 'markmap-cli';
-import debounce from 'lodash.debounce';
+import * as debounce from 'lodash.debounce';
 
 const disposables: Disposable[] = [];
 
@@ -79,7 +79,8 @@ export function activate(context: ExtensionContext): void {
     ['n'],
     'markmap-create',
     async () => {
-      await createMarkmapFromVim(await getFullText());
+      const content = await getFullText();
+      await createMarkmapFromVim(content);
     },
     { sync: false },
   ));
@@ -88,22 +89,25 @@ export function activate(context: ExtensionContext): void {
     ['v'],
     'markmap-create-v',
     async () => {
-      await createMarkmapFromVim(await getSelectedText());
+      const content = await getSelectedText();
+      await createMarkmapFromVim(content);
     },
     { sync: false },
   ));
 
   context.subscriptions.push(commands.registerCommand(
     'markmap.create',
-    async (...args: string[]) => {
-      const positional = [];
-      const options: any = {};
-      for (const arg of args) {
-        if (['-w', '--watch'].includes(arg)) options.watch = true;
-        else if (!arg.startsWith('-')) positional.push(arg);
-      }
+    async () => {
       const content = await getFullText();
-      await createMarkmapFromVim(content, options);
+      await createMarkmapFromVim(content);
+    },
+  ));
+
+  context.subscriptions.push(commands.registerCommand(
+    'markmap.watch',
+    async () => {
+      const content = await getFullText();
+      await createMarkmapFromVim(content, { watch: true });
     },
   ));
 }

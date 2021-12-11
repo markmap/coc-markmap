@@ -39,10 +39,10 @@ Transforming plugins are enabled by default, including syntax highlight with [Pr
 There is also a watching mode:
 
 ```viml
-:CocCommand markmap.create -w
+:CocCommand markmap.watch
 ```
 
-The node under cursor will always be visible in the viewport on cursor move.
+The markmap will update once the markdown file changes, and the node under cursor will always be visible in the viewport on cursor move.
 
 ## Configurations
 
