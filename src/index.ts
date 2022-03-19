@@ -20,7 +20,7 @@ async function getFullText(): Promise<string> {
 async function getSelectedText(): Promise<string> {
   const doc = await workspace.document;
   const range = await workspace.getSelectedRange('v', doc);
-  return doc.textDocument.getText(range);
+  return range ? doc.textDocument.getText(range) : '';
 }
 
 async function startDevelop() {
@@ -56,8 +56,11 @@ async function startDevelop() {
   updateContent();
 }
 
-async function createMarkmapFromVim(content: string, options?: any): Promise<void> {
-  if (options.watch) {
+async function createMarkmapFromVim(
+  content: string,
+  options?: { watch: boolean },
+): Promise<void> {
+  if (options?.watch) {
     return startDevelop();
   }
   const { nvim } = workspace;

@@ -23,9 +23,10 @@
     "dist"
   ],
   "devDependencies": {
-    "@babel/runtime": "^7.16.3",
-    "@gera2ld/plaid": "~2.4.0",
-    "@gera2ld/plaid-common-ts": "~2.4.0",
+    "@babel/runtime": "^7.17.8",
+    "@gera2ld/plaid": "~2.5.1",
+    "@gera2ld/plaid-common-ts": "~2.5.1",
+    "@types/node": "^17.0.21",
     "coc.nvim": "^0.0.80",
     "del-cli": "^4.0.1",
     "husky": "^7.0.4"
@@ -33,7 +34,7 @@
   "dependencies": {
     "lodash.debounce": "^4.0.8",
     "markmap-cli": "^0.5.4",
-    "pirates": "^4.0.4"
+    "pirates": "^4.0.5"
   },
   "engines": {
     "coc": ">= 0.0.70"

@@ -4,7 +4,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "dist",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true
   },
   "include": [
     "src/**/*"
