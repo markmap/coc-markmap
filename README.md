@@ -24,25 +24,27 @@ Then install with the Vim command:
 
 ## Usage
 
-### Generating markmap HTML
+You can run the commands below **in a buffer of Markdown file**.
 
-Open a Markdown, and execute:
+### Generating a markmap HTML
 
 ```viml
 :CocCommand markmap.create
 ```
 
-An HTML file with the same basename as the Markdown file will be created and opened in your default browser. If there is a selection, it will be used instead of the file content.
+**This command will create an HTML file rendering the markmap and can be easily shared.**
+
+The HTML file will have the same basename as the Markdown file and will be opened in your default browser. If there is a selection, it will be used instead of the file content.
 
 Transforming plugins are enabled by default, including syntax highlight with [PrismJS](https://prismjs.com/) and math typesetting with [Katex](https://katex.org/).
 
 ### Watching mode
 
-There is also a watching mode:
-
 ```viml
 :CocCommand markmap.watch
 ```
+
+**This command will start a development server and track your cursor.**
 
 The markmap will update once the markdown file changes, and the node under cursor will always be visible in the viewport on cursor move.
 
