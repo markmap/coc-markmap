@@ -8,7 +8,7 @@ This is an extension for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
 If you prefer a CLI version, see [markmap-cli](https://github.com/gera2ld/markmap/tree/master/packages/markmap-cli).
 
-Note: *coc-markmap* allows generating markmaps from current buffer or selected text, while the CLI version can only create markmaps from Markdown files.
+Note: _coc-markmap_ allows generating markmaps from current buffer or selected text, while the CLI version can only create markmaps from Markdown files.
 
 <img src="https://user-images.githubusercontent.com/3139113/72221499-52476a80-3596-11ea-8d15-c57fdfe04ce0.png" alt="markdown" width="300"> <img src="https://user-images.githubusercontent.com/3139113/72221508-7014cf80-3596-11ea-9b59-b8a97bba8e1c.png" alt="mindmap" width="300">
 
@@ -30,6 +30,12 @@ You can run the commands below **in a buffer of Markdown file**.
 
 ```viml
 :CocCommand markmap.create
+```
+
+Or inline all assets to work offline:
+
+```viml
+:CocCommand markmap.create --offline
 ```
 
 **This command will create an HTML file rendering the markmap and can be easily shared.**
