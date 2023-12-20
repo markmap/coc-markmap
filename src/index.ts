@@ -1,15 +1,16 @@
-import './prism-patch';
-import { basename, extname } from 'node:path';
+import { basename, extname, resolve } from 'node:path';
+import { spawn } from 'node:child_process';
 import {
   Disposable,
   ExtensionContext,
   commands,
-  workspace,
   events,
+  window,
+  workspace,
 } from 'coc.nvim';
-import { develop, createMarkmap } from 'markmap-cli';
 // Note: only CJS is supported by coc.nvim
 import debounce from 'lodash.debounce';
+import { getPortPromise } from 'portfinder';
 
 const disposables: Disposable[] = [];
 
@@ -20,7 +21,7 @@ async function getFullText(): Promise<string> {
 
 async function getSelectedText(): Promise<string> {
   const doc = await workspace.document;
-  const range = await workspace.getSelectedRange('v', doc);
+  const range = await window.getSelectedRange('v');
   return range ? doc.textDocument.getText(range) : '';
 }
 
@@ -31,35 +32,76 @@ async function startDevelop() {
     }
     disposables.length = 0;
   }
-  const devServer = await develop(undefined, {
-    open: true,
-    toolbar: true,
-    offline: true,
-  });
+  const port = await getPortPromise();
+  const p = runJS(
+    `import('markmap-cli').then(({ develop }) => develop(undefined, ${JSON.stringify(
+      {
+        open: true,
+        toolbar: true,
+        offline: true,
+        port,
+      },
+    )}))`,
+  );
+  const rpc = async (cmd: string, args: unknown[]) => {
+    // console.log('RPC:', cmd, args);
+    const res = await fetch(`http://localhost:${port}/~api`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        cmd,
+        args,
+      }),
+    });
+    if (!res.ok) {
+      console.error(`Error: ${res.status}`);
+    }
+    return res.ok;
+  };
   const { nvim } = workspace;
   const buffer = await nvim.buffer;
   const updateContent = async () => {
     const lines = await buffer.getLines();
-    devServer.provider.setContent(lines.join('\n'));
+    return await rpc('setContent', [lines.join('\n')]);
   };
   const handleTextChange = debounce((bufnr: number) => {
     if (buffer.id !== bufnr) {
       return;
     }
-    return updateContent();
+    updateContent();
   }, 500);
   const handleCursor = debounce((bufnr: number) => {
     if (buffer.id !== bufnr) {
       return;
     }
-    devServer.provider.setCursor(events.cursor.lnum - 1);
+    rpc('setCursor', [events.cursor.lnum - 1]);
   }, 300);
-  disposables.push(Disposable.create(() => devServer.close()));
+  disposables.push(Disposable.create(() => p.kill()));
   disposables.push(events.on('TextChanged', handleTextChange));
   disposables.push(events.on('TextChangedI', handleTextChange));
   disposables.push(events.on('CursorMoved', handleCursor));
   disposables.push(events.on('CursorMovedI', handleCursor));
-  updateContent();
+  let time = 1000;
+  for (let i = 0; i < 3; i += 1) {
+    await delay(time);
+    if (await updateContent()) {
+      time = 0;
+      break;
+    }
+    time *= 2;
+  }
+  if (time) {
+    window.showErrorMessage('Error starting server');
+    p.kill();
+  } else {
+    window.showInformationMessage(`Markmap served at http://localhost:${port}`);
+  }
+}
+
+function delay(time: number) {
+  return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 async function createMarkmapFromVim(
@@ -77,13 +119,25 @@ async function createMarkmapFromVim(
   const { nvim } = workspace;
   const input = (await nvim.eval('expand("%:p")')) as string;
   const name = basename(input, extname(input));
-  createMarkmap({
-    ...options,
+  const output = resolve(`${name}.html`);
+  const createOptions = {
     content,
-    output: name && `${name}.html`,
+    output,
     open: true,
     toolbar: true,
-    offline: mergedOptions.offline,
+    ...mergedOptions,
+  };
+  runJS(
+    `import('markmap-cli').then(({ createMarkmap }) => createMarkmap(${JSON.stringify(
+      createOptions,
+    )}))`,
+  );
+}
+
+function runJS(code: string) {
+  // console.log('runJS', code);
+  return spawn(process.execPath, ['-e', code], {
+    cwd: __dirname,
   });
 }
 

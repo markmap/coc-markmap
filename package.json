@@ -6,11 +6,11 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "dev": "tsc -w",
+    "dev": "rollup -cw",
     "clean": "del-cli dist",
     "prepublishOnly": "run-s build",
     "ci": "run-s lint",
-    "build:js": "tsc",
+    "build:js": "rollup -c",
     "build": "run-s ci clean build:js",
     "lint": "eslint --ext .ts . && prettier -c src",
     "lint:fix": "eslint --ext .ts . --fix && prettier -c src -w"
@@ -24,25 +24,22 @@
     "dist"
   ],
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.7",
-    "@types/node": "^20.4.2",
-    "coc.nvim": "^0.0.80",
-    "del-cli": "^5.0.0",
-    "eslint": "^8.44.0",
-    "eslint-config-unjs": "^0.2.1",
-    "husky": "^8.0.3",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^3.0.0",
-    "typescript": "^5.1.6"
+    "@gera2ld/plaid": "^2.7.0",
+    "@gera2ld/plaid-rollup": "^2.7.0",
+    "@types/lodash.debounce": "^4.0.9",
+    "@types/node": "^20.10.5",
+    "coc.nvim": "0.0.83-next.9",
+    "del-cli": "^5.1.0",
+    "husky": "^8.0.3"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
-    "markmap-cli": "0.14.5-alpha.18",
-    "pirates": "^4.0.6"
+    "markmap-cli": "^0.15.8",
+    "portfinder": "^1.0.32"
   },
   "engines": {
-    "coc": ">=0.0.70",
-    "node": ">=16"
+    "coc": ">=0.0.80",
+    "node": ">=18"
   },
   "keywords": [
     "coc.nvim",
