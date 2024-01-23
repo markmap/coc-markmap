@@ -1,5 +1,3 @@
-import { basename, extname, resolve } from 'node:path';
-import { spawn } from 'node:child_process';
 import {
   Disposable,
   ExtensionContext,
@@ -8,6 +6,8 @@ import {
   window,
   workspace,
 } from 'coc.nvim';
+import { spawn } from 'node:child_process';
+import { basename, extname, resolve } from 'node:path';
 // Note: only CJS is supported by coc.nvim
 import debounce from 'lodash.debounce';
 import { getPortPromise } from 'portfinder';
@@ -25,7 +25,39 @@ async function getSelectedText(): Promise<string> {
   return range ? doc.textDocument.getText(range) : '';
 }
 
-async function startDevelop() {
+async function markmapDevelop(
+  cliPromise: Promise<typeof import('markmap-cli')>,
+  assetsDir: string,
+  opts: Record<string, unknown>,
+) {
+  const { config, develop, fetchAssets } = await cliPromise;
+  config.assetsDir = assetsDir;
+  await fetchAssets();
+  return develop(undefined, {
+    open: true,
+    toolbar: true,
+    offline: true,
+    ...opts,
+  });
+}
+
+async function markmapCreate(
+  cliPromise: Promise<typeof import('markmap-cli')>,
+  assetsDir: string,
+  args: Record<string, unknown>,
+) {
+  const { config, createMarkmap, fetchAssets } = await cliPromise;
+  config.assetsDir = assetsDir;
+  await fetchAssets();
+  return createMarkmap({
+    open: true,
+    toolbar: true,
+    offline: false,
+    ...args,
+  });
+}
+
+async function startDevelop(assetsDir: string) {
   if (disposables.length > 0) {
     for (const disposable of disposables) {
       disposable.dispose();
@@ -34,14 +66,9 @@ async function startDevelop() {
   }
   const port = await getPortPromise();
   const p = runJS(
-    `import('markmap-cli').then(({ develop }) => develop(undefined, ${JSON.stringify(
-      {
-        open: true,
-        toolbar: true,
-        offline: true,
-        port,
-      },
-    )}))`,
+    `(${markmapDevelop})(import('markmap-cli'), ${JSON.stringify(
+      assetsDir,
+    )}, ${JSON.stringify({ port })})`,
   );
   const rpc = async (cmd: string, args: unknown[]) => {
     // console.log('RPC:', cmd, args);
@@ -110,6 +137,7 @@ function delay(time: number) {
 }
 
 async function createMarkmapFromVim(
+  assetsDir: string,
   content: string,
   options?: { watch?: boolean; offline?: boolean },
 ): Promise<void> {
@@ -119,7 +147,7 @@ async function createMarkmapFromVim(
     ...options,
   };
   if (mergedOptions.watch) {
-    return startDevelop();
+    return startDevelop(assetsDir);
   }
   const { nvim } = workspace;
   const input = (await nvim.eval('expand("%:p")')) as string;
@@ -128,14 +156,12 @@ async function createMarkmapFromVim(
   const createOptions = {
     content,
     output,
-    open: true,
-    toolbar: true,
     ...mergedOptions,
   };
   runJS(
-    `import('markmap-cli').then(({ createMarkmap }) => createMarkmap(${JSON.stringify(
-      createOptions,
-    )}))`,
+    `(${markmapCreate})(import('markmap-cli'), ${JSON.stringify(
+      assetsDir,
+    )}, ${JSON.stringify(createOptions)})`,
   );
 }
 
@@ -148,6 +174,7 @@ function runJS(code: string) {
 
 export function activate(context: ExtensionContext): void {
   // const config = workspace.getConfiguration('markmap');
+  const assetsDir = context.storagePath;
 
   context.subscriptions.push(
     workspace.registerKeymap(
@@ -155,7 +182,7 @@ export function activate(context: ExtensionContext): void {
       'markmap-create',
       async () => {
         const content = await getFullText();
-        await createMarkmapFromVim(content);
+        await createMarkmapFromVim(assetsDir, content);
       },
       { sync: false },
     ),
@@ -167,7 +194,7 @@ export function activate(context: ExtensionContext): void {
       'markmap-create-v',
       async () => {
         const content = await getSelectedText();
-        await createMarkmapFromVim(content);
+        await createMarkmapFromVim(assetsDir, content);
       },
       { sync: false },
     ),
@@ -179,14 +206,14 @@ export function activate(context: ExtensionContext): void {
       const options = {
         offline: args.includes('--offline'),
       };
-      await createMarkmapFromVim(content, options);
+      await createMarkmapFromVim(assetsDir, content, options);
     }),
   );
 
   context.subscriptions.push(
     commands.registerCommand('markmap.watch', async () => {
       const content = await getFullText();
-      await createMarkmapFromVim(content, { watch: true });
+      await createMarkmapFromVim(assetsDir, content, { watch: true });
     }),
   );
 }

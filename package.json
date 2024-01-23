@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
-    "markmap-cli": "^0.15.8",
+    "markmap-cli": "^0.15.9-alpha.16",
     "portfinder": "^1.0.32"
   },
   "engines": {
@@ -54,5 +54,6 @@
       "properties": {}
     }
   },
-  "repository": "git@github.com:gera2ld/coc-markmap.git"
+  "repository": "git@github.com:gera2ld/coc-markmap.git",
+  "browserslist": ["node >= 18"]
 }
