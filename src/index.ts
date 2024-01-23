@@ -45,20 +45,25 @@ async function startDevelop() {
   );
   const rpc = async (cmd: string, args: unknown[]) => {
     // console.log('RPC:', cmd, args);
-    const res = await fetch(`http://localhost:${port}/~api`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        cmd,
-        args,
-      }),
-    });
-    if (!res.ok) {
-      console.error(`Error: ${res.status}`);
+    try {
+      const res = await fetch(`http://localhost:${port}/~api`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          cmd,
+          args,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(`Request error: ${res.status}`);
+      }
+      return true;
+    } catch (err) {
+      console.error(err);
+      return false;
     }
-    return res.ok;
   };
   const { nvim } = workspace;
   const buffer = await nvim.buffer;
