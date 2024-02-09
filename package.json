@@ -27,14 +27,14 @@
     "@gera2ld/plaid": "^2.7.0",
     "@gera2ld/plaid-rollup": "^2.7.0",
     "@types/lodash.debounce": "^4.0.9",
-    "@types/node": "^20.10.5",
+    "@types/node": "^20.11.17",
     "coc.nvim": "0.0.83-next.9",
     "del-cli": "^5.1.0",
-    "husky": "^8.0.3"
+    "husky": "^9.0.10"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
-    "markmap-cli": "^0.15.9-alpha.16",
+    "markmap-cli": "^0.16.0",
     "portfinder": "^1.0.32"
   },
   "engines": {
