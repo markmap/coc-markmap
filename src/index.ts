@@ -8,8 +8,8 @@ import {
 } from 'coc.nvim';
 import { spawn } from 'node:child_process';
 import { basename, extname, resolve } from 'node:path';
-// Note: only CJS is supported by coc.nvim
-import debounce from 'lodash.debounce';
+// Note: only CJS is supported by coc.nvim, so we must bundle it
+import { debounce } from 'es-toolkit';
 import { getPortPromise } from 'portfinder';
 
 const disposables: Disposable[] = [];

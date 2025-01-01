@@ -24,18 +24,17 @@
     "dist"
   ],
   "devDependencies": {
-    "@gera2ld/plaid": "^2.7.0",
-    "@gera2ld/plaid-rollup": "^2.7.0",
-    "@types/lodash.debounce": "^4.0.9",
+    "@gera2ld/plaid": "~2.7.0",
+    "@gera2ld/plaid-rollup": "~2.7.0",
     "@types/node": "^20.11.17",
     "coc.nvim": "0.0.83-next.9",
-    "del-cli": "^5.1.0",
-    "husky": "^9.0.10"
+    "del-cli": "^6.0.0",
+    "es-toolkit": "^1.31.0",
+    "husky": "^9.1.7"
   },
   "dependencies": {
-    "lodash.debounce": "^4.0.8",
-    "markmap-cli": "^0.16.0",
-    "portfinder": "^1.0.32"
+    "markmap-cli": "0.18.7",
+    "open": "^10.1.0"
   },
   "engines": {
     "coc": ">=0.0.80",

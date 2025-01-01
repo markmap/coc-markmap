@@ -1,6 +1,6 @@
 import { defineConfig } from 'rollup';
 import { definePlugins, defineExternal } from '@gera2ld/plaid-rollup';
-import pkg from './package.json' assert { type: 'json' };
+import pkg from './package.json' with { type: 'json' };
 
 export default defineConfig({
   input: './src/index.ts',
