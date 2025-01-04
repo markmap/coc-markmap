@@ -6,9 +6,9 @@ Visualize your Markdown as mindmaps with [markmap](https://markmap.js.org/).
 
 This is an extension for [coc.nvim](https://github.com/neoclide/coc.nvim).
 
-If you prefer a CLI version, see [markmap-cli](https://github.com/gera2ld/markmap/tree/master/packages/markmap-cli).
+If you prefer a CLI version, see [markmap-cli](https://markmap.js.org/docs/packages--markmap-cli).
 
-Note: _coc-markmap_ allows generating markmaps from current buffer or selected text, while the CLI version can only create markmaps from Markdown files.
+Note: _coc-markmap_ uses _markmap-cli_ under the hood, and supports more features by connecting the Markmap with the current buffer, such as highlighting the node under cursor.
 
 <img src="https://user-images.githubusercontent.com/3139113/72221499-52476a80-3596-11ea-8d15-c57fdfe04ce0.png" alt="markdown" width="300"> <img src="https://user-images.githubusercontent.com/3139113/72221508-7014cf80-3596-11ea-9b59-b8a97bba8e1c.png" alt="mindmap" width="300">
 
@@ -32,7 +32,7 @@ You can run the commands below **in a buffer of Markdown file**.
 :CocCommand markmap.create
 ```
 
-Or inline all assets to work offline:
+Inline all assets to work offline:
 
 ```viml
 :CocCommand markmap.create --offline
@@ -42,17 +42,21 @@ Or inline all assets to work offline:
 
 The HTML file will have the same basename as the Markdown file and will be opened in your default browser. If there is a selection, it will be used instead of the file content.
 
-Transforming plugins are enabled by default, including syntax highlight with [PrismJS](https://prismjs.com/) and math typesetting with [Katex](https://katex.org/).
-
 ### Watching mode
 
 ```viml
 :CocCommand markmap.watch
 ```
 
-**This command will start a development server and track your cursor.**
+**This command will start a development server, watch the current buffer and track your cursor.**
 
 The markmap will update once the markdown file changes, and the node under cursor will always be visible in the viewport on cursor move.
+
+```viml
+:CocCommand markmap.unwatch
+```
+
+**The command will unwatch the current buffer.**
 
 ## Configurations
 
@@ -69,8 +73,6 @@ There is no default key mapping, but you can easily add your own:
 ```viml
 " Create markmap from the whole file
 nmap <Leader>m <Plug>(coc-markmap-create)
-" Create markmap from the selected lines
-vmap <Leader>m <Plug>(coc-markmap-create-v)
 ```
 
 ### Commands
